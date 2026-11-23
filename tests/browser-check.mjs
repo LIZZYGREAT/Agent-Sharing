@@ -180,6 +180,7 @@ try {
   assert.equal(
     await page
       .locator(".hero-route i")
+      .first()
       .evaluate((e) => getComputedStyle(e, ":after").animationName),
     "none",
   );

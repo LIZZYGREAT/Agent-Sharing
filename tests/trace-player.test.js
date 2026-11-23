@@ -5,8 +5,12 @@ import { TracePlayer } from "../src/core/trace-player.js";
 import { trace, initialCode, fixedCode } from "../src/content/agent-trace.js";
 
 test("all snapshots are deterministic, and reversing removes future effects", () => {
-  for (let i = trace.length - 1; i >= 0; i--)
-    assert.deepEqual(stateAt(i), stateAt(i));
+  const before = stateAt(3);
+  const later = stateAt(trace.length - 1);
+  later.context.push({ id: "outside", text: "must not leak" });
+  assert.deepEqual(stateAt(3), before);
+  assert.equal(stateAt(0).context.length, 1);
+  assert.equal(stateAt(9).context.length, 5);
   assert.equal(stateAt(7).previewStage, "edited");
   assert.equal(stateAt(9).build, "failed");
   assert.equal(stateAt(10).code, fixedCode);
